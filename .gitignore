@@ -1,0 +1,5 @@
+GODA_pyPPG/
+__pycache__/
+data/
+temp_dir/
+tempCodeRunnerFile.py

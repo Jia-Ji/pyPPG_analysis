@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.io import savemat
 import os
+from pyPPG import PPG, Fiducials
 
 def plot_ppg_data(signal, fs):
 
@@ -44,6 +45,11 @@ def plot_derived_signal(signal):
     plt.show()
 
 
+def calculate_HR(s: PPG, fp: Fiducials):
+    HR = len(s.ppg)/len(fp.sp)*s.fs
+    return HR
+
+
 def convert_npy_to_mat(s: np.array, pad:bool, tile:bool, tile_reps:int, pad_width: int, save_path:str, signal_index:int):
     if tile or pad:
         filename = f"temp_segment_{signal_index}.mat"
@@ -61,7 +67,7 @@ def convert_npy_to_mat(s: np.array, pad:bool, tile:bool, tile_reps:int, pad_widt
     # print(signal_column.shape)
     mat_data = {
         'Data': signal_column,
-        'Fs': 240
+        'Fs': 50
     }
     
     if not os.path.exists(save_path):

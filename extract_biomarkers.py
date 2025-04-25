@@ -12,17 +12,17 @@ import pyPPG
 from scipy.signal import resample
 import pandas as pd
 
-from utils import convert_npy_to_mat
+from utils import convert_npy_to_mat, plot_ppg_data, calculate_HR
 
-ppg_data_path = 'data/compiled/x_test.npy'
+ppg_data_path = 'data/UMass_data/x_train.npy'
 mat_save_path = 'data/segments'
 fig_save_path = 'figures'
 temp_mat_save_path = 'data/temp_segments'
-fs = 240
+fs = 50
 start_sig = 0
 end_sig = -1
 use_tk = False
-pad_width = 960
+pad_width = 750
 tile_reps = 2
 
 
@@ -91,10 +91,14 @@ if __name__ == '__main__':
     data = np.load(ppg_data_path)
     data = data.reshape(data.shape[0], -1)
 
-    for i, segment in enumerate(data[0:5]):
+    for i, segment in enumerate(data):
 
         signal = convert_npy_to_mat(segment, pad =False, pad_width=pad_width, tile=False, tile_reps=tile_reps,save_path=mat_save_path, signal_index=i)  
         temp_signal = convert_npy_to_mat(segment, pad=True, pad_width=pad_width, tile=True, tile_reps=tile_reps, save_path=temp_mat_save_path, signal_index=i)
+
+        # plot_ppg_data(signal['Data'], fs =50)
+
+
 
         signal_path = mat_save_path+'/'+f"segment_{i}.mat"
         temp_signal_path = temp_mat_save_path+'/'+f"temp_segment_{i}.mat"
@@ -111,7 +115,7 @@ if __name__ == '__main__':
         fp = Fiducials(fiducials)
 
         # Plot fiducial points
-        plot_fiducials(s, fp, savingfolder=fig_save_path, legend_fontsize=6) 
+        # plot_fiducials(s, fp, savingfolder=fig_save_path, legend_fontsize=6) 
                 
 
         

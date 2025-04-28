@@ -12,11 +12,15 @@ import pyPPG
 from scipy.signal import resample
 import pandas as pd
 
-from utils import convert_npy_to_mat, plot_ppg_data, calculate_HR
+from utils import convert_npy_to_mat, plot_ppg_data, estimate_HR, calculate_SQI
 
+
+'''
+Parameters
+'''
 ppg_data_path = 'data/UMass_data/x_train.npy'
 mat_save_path = 'data/segments'
-fig_save_path = 'figures'
+fig_save_path = 'output'
 temp_mat_save_path = 'data/temp_segments'
 fs = 50
 start_sig = 0
@@ -24,7 +28,13 @@ end_sig = -1
 use_tk = False
 pad_width = 750
 tile_reps = 2
+savingfolder = 'output'
+savingformat = 'csv'
 
+
+'''
+Functions
+'''
 
 def create_ppg(s_path, start_sig=0, end_sig=-1, use_tk=False):
     signal0 = load_data(data_path=s_path, start_sig=start_sig, end_sig=end_sig, use_tk=use_tk)
@@ -87,11 +97,12 @@ def calculate_hr(s, fp):
     HR=len(s.ppg)/len(fp.sp)*s.fs 
     return HR
 
+
 if __name__ == '__main__':
     data = np.load(ppg_data_path)
     data = data.reshape(data.shape[0], -1)
 
-    for i, segment in enumerate(data):
+    for i, segment in enumerate(data[:5]):
 
         signal = convert_npy_to_mat(segment, pad =False, pad_width=pad_width, tile=False, tile_reps=tile_reps,save_path=mat_save_path, signal_index=i)  
         temp_signal = convert_npy_to_mat(segment, pad=True, pad_width=pad_width, tile=True, tile_reps=tile_reps, save_path=temp_mat_save_path, signal_index=i)
@@ -116,6 +127,26 @@ if __name__ == '__main__':
 
         # Plot fiducial points
         # plot_fiducials(s, fp, savingfolder=fig_save_path, legend_fontsize=6) 
+
+        # Estimate HR
+        hr = estimate_HR(s, fp)
+
+        # calculate signal quality index
+        sqi = calculate_SQI(s, fp)
+
+        # Extract biomarkers
+        bmex = BM.BmCollection(s, fp)
+        
+        bm_defs, bm_vals, bm_stats = bmex.get_biomarkers()
+        tmp_keys=bm_stats.keys()
+        print('Statistics of the biomarkers:')
+        for i in tmp_keys: print(i,'\n',bm_stats[i])
+
+        bm = Biomarkers(bm_defs, bm_vals, bm_stats)
+
+        # save ppg data
+        fp_new = Fiducials(fp.get_fp() + s.start_sig) # here the starting sample is added so that the results are relative to the start of the original signal (rather than the start of the analysed segment)
+        save_data(s, fp_new, bm, savingformat, savingfolder)
                 
 
         

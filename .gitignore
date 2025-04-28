@@ -1,5 +1,6 @@
 GODA_pyPPG/
 __pycache__/
-# data/
+data/segments
+data/temp_segments
 # temp_dir/
 tempCodeRunnerFile.py

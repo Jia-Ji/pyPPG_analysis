@@ -131,7 +131,7 @@ class FpCollection:
                 * After the correction of Peaks, the Onsets are recalculated
         '''
 
-        # # inputs
+        # # inputs  (240Hz)
         # x = copy.deepcopy(self.ppg)                    #signal
         # fso=self.fs
         # fs = 144
@@ -146,10 +146,24 @@ class FpCollection:
         # # print(win_starts)
         # win_starts = np.insert(win_starts,len(win_starts), len(x) + 1 - w)
 
-        # inputs
+        # # inputs  (240Hz)
+        # x = copy.deepcopy(self.ppg)                    #signal
+        # fso=self.fs
+        # fs = 75
+        # x = resample(x, int(len(self.ppg)*(fs/fso)))  #len(x)=600
+        # up = self.set_beat_detection()                 #settings
+        # win_sec= 3
+        # w = fs * win_sec                                    #window length(number of samples)
+        # win_starts = np.array(list(range(0,len(x),round(0.8*w)))) # 0.8*w=600
+        # # print(min(np.where([win_starts >= len(x) - w])[1]))
+        # win_starts = win_starts[0:min(np.where([win_starts >= len(x) - w])[1])]
+        # win_starts = np.insert(win_starts,len(win_starts), len(x) + 1 - w)
+        # # print(win_starts)
+
+        # inputs  (50Hz)
         x = copy.deepcopy(self.ppg)                    #signal
         fso=self.fs
-        fs = 75
+        fs = 50
         x = resample(x, int(len(self.ppg)*(fs/fso)))  #len(x)=600
         up = self.set_beat_detection()                 #settings
         win_sec= 3
@@ -821,8 +835,8 @@ class FpCollection:
 
         # Make filter
         Fn = fs / 2                                 # Nyquist Frequency
-        FcU = 20                                    # Cut off Frequency: 20 Hz
-        FcD = FcU + 5                               # Transition Frequency: 5 Hz
+        FcU = 15                                   # Cut off Frequency: 20 Hz
+        FcD = FcU + 3                               # Transition Frequency: 5 Hz
 
         n = 21                                      # Filter order
         f = [0, (FcU / Fn), (FcD / Fn), 1]          # Frequency band edges

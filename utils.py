@@ -2,6 +2,10 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.io import savemat
 import os
+import pandas as pd
+from pyPPG import PPG, Fiducials
+import pyPPG.ppg_sqi as SQI
+import os
 
 def plot_ppg_data(signal, fs):
 
@@ -44,6 +48,27 @@ def plot_derived_signal(signal):
     plt.show()
 
 
+def estimate_HR(s: PPG, fp: Fiducials):
+    num_beats=len(fp.sp)  # number of the beats
+    duration_seconds=len(s.ppg)/s.fs  # duration in seconds
+    HR = (num_beats / duration_seconds) * 60 # heart rate
+    print('Estimated HR: ',HR,' bpm' )
+    return HR
+
+def calculate_SQI(s:PPG, fp: Fiducials):
+    annotations = fp.sp.copy()
+    # Convert to numpy if it’s pandas
+    if isinstance(annotations, pd.Series):
+        annotations = annotations.dropna().values
+
+    # Remove invalid annotations (e.g., less than 1 or larger than PPG length)
+    annotations = annotations[(annotations > 0) & (annotations < len(s.ppg))]
+
+    ppgSQI = round(np.mean(SQI.get_ppgSQI(s.ppg, s.fs, annotations)) * 100, 2)
+    print('Mean PPG SQI: ', ppgSQI, '%')
+    return ppgSQI
+
+
 def convert_npy_to_mat(s: np.array, pad:bool, tile:bool, tile_reps:int, pad_width: int, save_path:str, signal_index:int):
     if tile or pad:
         filename = f"temp_segment_{signal_index}.mat"
@@ -61,7 +86,7 @@ def convert_npy_to_mat(s: np.array, pad:bool, tile:bool, tile_reps:int, pad_widt
     # print(signal_column.shape)
     mat_data = {
         'Data': signal_column,
-        'Fs': 240
+        'Fs': 50
     }
     
     if not os.path.exists(save_path):
@@ -69,3 +94,22 @@ def convert_npy_to_mat(s: np.array, pad:bool, tile:bool, tile_reps:int, pad_widt
     savemat(save_path+'/'+filename, mat_data)
 
     return mat_data
+
+def delete_empty_dirs(root_dir):
+    """
+    Recursively delete empty subdirectories under the given root directory.
+    
+    Args:
+        root_dir (str): Path to the root directory to check.
+    """
+    for dirpath, dirnames, filenames in os.walk(root_dir, topdown=False):
+        # Check if directory is empty (no files and no subdirectories)
+        if not dirnames and not filenames:
+            try:
+                os.rmdir(dirpath)
+                print(f"Deleted empty directory: {dirpath}")
+            except OSError as e:
+                print(f"Error deleting {dirpath}: {e}")
+
+# Example usage
+# delete_empty_dirs('/path/to/your/root_directory')

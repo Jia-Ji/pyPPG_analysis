@@ -263,7 +263,15 @@ def plot_fiducials(s: pyPPG.PPG, fp: pyPPG.Fiducials, savefig=True, savingfolder
         else:
             fc='none'
 
-        exec("plt.scatter(tmp_pnt, tmp_sig[tmp_pnt], s=marker_size,linewidth=2, marker = marker[ind], facecolors=fc, color=color[ind], label=n)")
+        # exec("plt.scatter(tmp_pnt, tmp_sig[tmp_pnt], s=marker_size,linewidth=2, marker = marker[ind], facecolors=fc, color=color[ind], label=n)")
+        # Ensure indices are within bounds
+        tmp_pnt = np.array(tmp_pnt)
+        valid_idx = (tmp_pnt >= 0) & (tmp_pnt < len(tmp_sig))
+        tmp_pnt = tmp_pnt[valid_idx]
+
+        plt.scatter(tmp_pnt, tmp_sig[tmp_pnt], s=marker_size, linewidth=2,
+                    marker=marker[ind], facecolors=fc, color=color[ind], label=n)
+
 
         if ind<len(s_type)-1:
             legend_flag = s_type[ind] != s_type[ind + 1]

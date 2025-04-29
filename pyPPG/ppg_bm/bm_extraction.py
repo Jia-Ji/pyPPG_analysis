@@ -1,5 +1,5 @@
 import pyPPG
-
+import numbers
 import numpy as np
 from dotmap import DotMap
 import pandas as pd
@@ -72,121 +72,121 @@ class BmExctator:
         my_funcs = {#PPG signal
                     "Tpi": "self.getTpi()",
                     "Tpp": "self.getTpp()",
-                    # "Tsys": "self.getTsys()",
-                    # "Tdia": "self.getTdia()",
-                    # "Tsp": "self.getTsp()",
-                    # "Tdp": "self.getTdp()",
-                    # "deltaT": "self.get_deltaT()",
-                    # "Tsw10": "self.getSystolicWidth_d_percent(10)",
-                    # "Tsw25": "self.getSystolicWidth_d_percent(25)",
-                    # "Tsw33": "self.getSystolicWidth_d_percent(33)",
-                    # "Tsw50": "self.getSystolicWidth_d_percent(50)",
-                    # "Tsw66": "self.getSystolicWidth_d_percent(66)",
-                    # "Tsw75": "self.getSystolicWidth_d_percent(75)",
-                    # "Tsw90": "self.getSystolicWidth_d_percent(90)",
-                    # "Tdw10": "self.getDiastolicWidth_d_percent(10)",
-                    # "Tdw25": "self.getDiastolicWidth_d_percent(25)",
-                    # "Tdw33": "self.getDiastolicWidth_d_percent(33)",
-                    # "Tdw50": "self.getDiastolicWidth_d_percent(50)",
-                    # "Tdw66": "self.getDiastolicWidth_d_percent(66)",
-                    # "Tdw75": "self.getDiastolicWidth_d_percent(75)",
-                    # "Tdw90": "self.getDiastolicWidth_d_percent(90)",
-                    # "Tpw10": "self.getSumSW_DW(10)",
-                    # "Tpw25": "self.getSumSW_DW(25)",
-                    # "Tpw33": "self.getSumSW_DW(33)",
-                    # "Tpw50": "self.getSumSW_DW(50)",
-                    # "Tpw66": "self.getSumSW_DW(66)",
-                    # "Tpw75": "self.getSumSW_DW(75)",
-                    # "Tpw90": "self.getSumSW_DW(90)",
-                    # "Asp": "self.getSystolicPeak()",
-                    # "Adn": "self.getDicroticNotchAmplitude()",
-                    # "Adp": "self.getDiastolicPeak()",
-                    # "Aoff": "self.getPulseOffsetAmplitude()",
-                    # "AUCpi": "self.getAUCpi()",
-                    # "AUCsys": "self.getAUCsys()",
-                    # "AUCdia": "self.getAUCdia()",
+                    "Tsys": "self.getTsys()",
+                    "Tdia": "self.getTdia()",
+                    "Tsp": "self.getTsp()",
+                    "Tdp": "self.getTdp()",
+                    "deltaT": "self.get_deltaT()",
+                    "Tsw10": "self.getSystolicWidth_d_percent(10)",
+                    "Tsw25": "self.getSystolicWidth_d_percent(25)",
+                    "Tsw33": "self.getSystolicWidth_d_percent(33)",
+                    "Tsw50": "self.getSystolicWidth_d_percent(50)",
+                    "Tsw66": "self.getSystolicWidth_d_percent(66)",
+                    "Tsw75": "self.getSystolicWidth_d_percent(75)",
+                    "Tsw90": "self.getSystolicWidth_d_percent(90)",
+                    "Tdw10": "self.getDiastolicWidth_d_percent(10)",
+                    "Tdw25": "self.getDiastolicWidth_d_percent(25)",
+                    "Tdw33": "self.getDiastolicWidth_d_percent(33)",
+                    "Tdw50": "self.getDiastolicWidth_d_percent(50)",
+                    "Tdw66": "self.getDiastolicWidth_d_percent(66)",
+                    "Tdw75": "self.getDiastolicWidth_d_percent(75)",
+                    "Tdw90": "self.getDiastolicWidth_d_percent(90)",
+                    "Tpw10": "self.getSumSW_DW(10)",
+                    "Tpw25": "self.getSumSW_DW(25)",
+                    "Tpw33": "self.getSumSW_DW(33)",
+                    "Tpw50": "self.getSumSW_DW(50)",
+                    "Tpw66": "self.getSumSW_DW(66)",
+                    "Tpw75": "self.getSumSW_DW(75)",
+                    "Tpw90": "self.getSumSW_DW(90)",
+                    "Asp": "self.getSystolicPeak()",
+                    "Adn": "self.getDicroticNotchAmplitude()",
+                    "Adp": "self.getDiastolicPeak()",
+                    "Aoff": "self.getPulseOffsetAmplitude()",
+                    "AUCpi": "self.getAUCpi()",
+                    "AUCsys": "self.getAUCsys()",
+                    "AUCdia": "self.getAUCdia()",
 
                     # Signal ratios
                     "IPR": "self.getIPR()",
-                    # "Tsys/Tdia": "self.get_ratio_Tsys_Tdia()",
-                    # "Tpw25/Tpi": "self.get_ratio_Tpwx_Tpi(25)",
-                    # "Tpw50/Tpi": "self.get_ratio_Tpwx_Tpi(50)",
-                    # "Tpw75/Tpi": "self.get_ratio_Tpwx_Tpi(75)",
-                    # "Tpw25/Tsp": "self.get_ratio_Tpwx_Tsp(25)",
-                    # "Tpw50/Tsp": "self.get_ratio_Tpwx_Tsp(50)",
-                    # "Tpw75/Tsp": "self.get_ratio_Tpwx_Tsp(75)",
-                    # "Tdw10/Tsw10": "self.get_ratio_Tdwx_Tswx(10)",
-                    # "Tdw25/Tsw25": "self.get_ratio_Tdwx_Tswx(25)",
-                    # "Tdw33/Tsw33": "self.get_ratio_Tdwx_Tswx(33)",
-                    # "Tdw50/Tsw50": "self.get_ratio_Tdwx_Tswx(50)",
-                    # "Tdw66/Tsw66": "self.get_ratio_Tdwx_Tswx(66)",
-                    # "Tdw75/Tsw75": "self.get_ratio_Tdwx_Tswx(75)",
-                    # "Tdw90/Tsw90": "self.get_ratio_Tdwx_Tswx(90)",
-                    # "Tsp/Tpi": "self.get_ratio_Tsp_Tpi()",
-                    # "Asp/Aoff": "self.get_ratio_Asp_Aoff()",
-                    # "Adp/Asp": "self.get_ratio_Adp_Asp()",
-                    # "IPA": "self.getIPA()",
-                    # "Tsp/Asp": "self.get_ratio_Tsp_Asp()",
-                    # "Asp/deltaT": "self.get_ratio_Asp_deltaT()",
-                    # "Asp/(Tpi-Tsp)": "self.get_ratio_Asp_TpiTsp()",
+                    "Tsys/Tdia": "self.get_ratio_Tsys_Tdia()",
+                    "Tpw25/Tpi": "self.get_ratio_Tpwx_Tpi(25)",
+                    "Tpw50/Tpi": "self.get_ratio_Tpwx_Tpi(50)",
+                    "Tpw75/Tpi": "self.get_ratio_Tpwx_Tpi(75)",
+                    "Tpw25/Tsp": "self.get_ratio_Tpwx_Tsp(25)",
+                    "Tpw50/Tsp": "self.get_ratio_Tpwx_Tsp(50)",
+                    "Tpw75/Tsp": "self.get_ratio_Tpwx_Tsp(75)",
+                    "Tdw10/Tsw10": "self.get_ratio_Tdwx_Tswx(10)",
+                    "Tdw25/Tsw25": "self.get_ratio_Tdwx_Tswx(25)",
+                    "Tdw33/Tsw33": "self.get_ratio_Tdwx_Tswx(33)",
+                    "Tdw50/Tsw50": "self.get_ratio_Tdwx_Tswx(50)",
+                    "Tdw66/Tsw66": "self.get_ratio_Tdwx_Tswx(66)",
+                    "Tdw75/Tsw75": "self.get_ratio_Tdwx_Tswx(75)",
+                    "Tdw90/Tsw90": "self.get_ratio_Tdwx_Tswx(90)",
+                    "Tsp/Tpi": "self.get_ratio_Tsp_Tpi()",
+                    "Asp/Aoff": "self.get_ratio_Asp_Aoff()",
+                    "Adp/Asp": "self.get_ratio_Adp_Asp()",
+                    "IPA": "self.getIPA()",
+                    "Tsp/Asp": "self.get_ratio_Tsp_Asp()",
+                    "Asp/deltaT": "self.get_ratio_Asp_deltaT()",
+                    "Asp/(Tpi-Tsp)": "self.get_ratio_Asp_TpiTsp()",
 
                     # PPG derivatives
-                    # "u": "self.get_u()",
-                    # "v": "self.get_v()",
-                    # "w": "self.get_w()",
-                    # "a": "self.get_a()",
-                    # "b": "self.get_b()",
-                    # "c": "self.get_c()",
-                    # "d": "self.get_d()",
-                    # "e": "self.get_e()",
-                    # "f": "self.get_f()",
-                    # "Tu": "self.get_Tu()",
-                    # "Tv": "self.get_Tv()",
-                    # "Tw": "self.get_Tw()",
-                    # "Ta": "self.get_Ta()",
-                    # "Tb": "self.get_Tb()",
-                    # "Tc": "self.get_Tc()",
-                    # "Td": "self.get_Td()",
-                    # "Te": "self.get_Te()",
-                    # "Tf": "self.get_Tf()",
-                    # "Tb-c": "self.get_Tbc()",
-                    # "Tb-d": "self.get_Tbd()",
-                    # "Tp1": "self.get_Tp1()",
-                    # "Tp2": "self.get_Tp2()",
-                    # "Tp1-dp": "self.get_Tp1_dp()",
-                    # "Tp2-dp": "self.get_Tp2_dp()",
+                    "u": "self.get_u()",
+                    "v": "self.get_v()",
+                    "w": "self.get_w()",
+                    "a": "self.get_a()",
+                    "b": "self.get_b()",
+                    "c": "self.get_c()",
+                    "d": "self.get_d()",
+                    "e": "self.get_e()",
+                    "f": "self.get_f()",
+                    "Tu": "self.get_Tu()",
+                    "Tv": "self.get_Tv()",
+                    "Tw": "self.get_Tw()",
+                    "Ta": "self.get_Ta()",
+                    "Tb": "self.get_Tb()",
+                    "Tc": "self.get_Tc()",
+                    "Td": "self.get_Td()",
+                    "Te": "self.get_Te()",
+                    "Tf": "self.get_Tf()",
+                    "Tb-c": "self.get_Tbc()",
+                    "Tb-d": "self.get_Tbd()",
+                    "Tp1": "self.get_Tp1()",
+                    "Tp2": "self.get_Tp2()",
+                    "Tp1-dp": "self.get_Tp1_dp()",
+                    "Tp2-dp": "self.get_Tp2_dp()",
 
                     # Derivatives ratios
-                    # "Tu/Tpi": "self.get_ratio_Tu_Tpi()",
-                    # "Tv/Tpi": "self.get_ratio_Tv_Tpi()",
-                    # "Tw/Tpi": "self.get_ratio_Tw_Tpi()",
-                    # "Ta/Tpi": "self.get_ratio_Ta_Tpi()",
-                    # "Tb/Tpi": "self.get_ratio_Tb_Tpi()",
-                    # "Tc/Tpi": "self.get_ratio_Tc_Tpi()",
-                    # "Td/Tpi": "self.get_ratio_Td_Tpi()",
-                    # "Te/Tpi": "self.get_ratio_Te_Tpi()",
-                    # "Tf/Tpi": "self.get_ratio_Tf_Tpi()",
-                    # "(Tu-Ta)/Tpi": "self.get_ratio_TuTa_Tpi()",
-                    # "(Tv-Tb)/Tpi": "self.get_ratio_TvTb_Tpi()",
-                    # "Au/Asp": "self.get_ratio_Au_Asp()",
-                    # "Av/Au": "self.get_ratio_Av_Au()",
-                    # "Aw/Au": "self.get_ratio_Aw_Au()",
-                    # "Ab/Aa": "self.get_ratio_Ab_Aa()",
-                    # "Ac/Aa": "self.get_ratio_Ac_Aa()",
-                    # "Ad/Aa": "self.get_ratio_Ad_Aa()",
-                    # "Ae/Aa": "self.get_ratio_Ae_Aa()",
-                    # "Af/Aa": "self.get_ratio_Af_Aa()",
-                    # "Ap2/Ap1": "self.get_ratio_Ap2_Ap1()",
-                    # "(Ac-Ab)/Aa": "self.get_ratio_AcAb_Aa()",
-                    # "(Ad-Ab)/Aa":"self.get_ratio_AdAb_Aa()",
-                    # "AGI": "self.getAGI()",
-                    # "AGImod": "self.getAGImod()",
-                    # "AGIinf": "self.getAGIinf()",
-                    # "AI": "self.getAI()",
-                    # "RIp1": "self.getRIp2()",
-                    # "RIp2": "self.getRIp2()",
-                    # "SC": "self.getSC()",
-                    # "IPAD": "self.getIPAD()",
+                    "Tu/Tpi": "self.get_ratio_Tu_Tpi()",
+                    "Tv/Tpi": "self.get_ratio_Tv_Tpi()",
+                    "Tw/Tpi": "self.get_ratio_Tw_Tpi()",
+                    "Ta/Tpi": "self.get_ratio_Ta_Tpi()",
+                    "Tb/Tpi": "self.get_ratio_Tb_Tpi()",
+                    "Tc/Tpi": "self.get_ratio_Tc_Tpi()",
+                    "Td/Tpi": "self.get_ratio_Td_Tpi()",
+                    "Te/Tpi": "self.get_ratio_Te_Tpi()",
+                    "Tf/Tpi": "self.get_ratio_Tf_Tpi()",
+                    "(Tu-Ta)/Tpi": "self.get_ratio_TuTa_Tpi()",
+                    "(Tv-Tb)/Tpi": "self.get_ratio_TvTb_Tpi()",
+                    "Au/Asp": "self.get_ratio_Au_Asp()",
+                    "Av/Au": "self.get_ratio_Av_Au()",
+                    "Aw/Au": "self.get_ratio_Aw_Au()",
+                    "Ab/Aa": "self.get_ratio_Ab_Aa()",
+                    "Ac/Aa": "self.get_ratio_Ac_Aa()",
+                    "Ad/Aa": "self.get_ratio_Ad_Aa()",
+                    "Ae/Aa": "self.get_ratio_Ae_Aa()",
+                    "Af/Aa": "self.get_ratio_Af_Aa()",
+                    "Ap2/Ap1": "self.get_ratio_Ap2_Ap1()",
+                    "(Ac-Ab)/Aa": "self.get_ratio_AcAb_Aa()",
+                    "(Ad-Ab)/Aa":"self.get_ratio_AdAb_Aa()",
+                    "AGI": "self.getAGI()",
+                    "AGImod": "self.getAGImod()",
+                    "AGIinf": "self.getAGIinf()",
+                    "AI": "self.getAI()",
+                    "RIp1": "self.getRIp2()",
+                    "RIp2": "self.getRIp2()",
+                    "SC": "self.getSC()",
+                    "IPAD": "self.getIPAD()",
         }
         return my_funcs
 
@@ -1235,20 +1235,134 @@ def get_biomarkers(s: pyPPG.PPG, fp: pyPPG.Fiducials, biomarkers_lst):
 
     df = pd.DataFrame(columns=['onset','offset','peak'])
     df_biomarkers = pd.DataFrame(columns=biomarkers_lst)
-    peaks = fp.sp.values
+    # Clean all fiducial arrays once at the top
+    peaks = fp.sp.dropna().astype(int).values
     onsets = fp.on.values
     offsets = fp.off.values
 
+
+
+    # try:
+    #     peaks = fp.sp.values
+    #     onsets = fp.on.values
+    #     offsets = fp.off.values
+    # except AttributeError:
+    #     print("Missing fiducial values (sp/on/off).")
+    #     return df, df_biomarkers
+
+    # for i in range(len(onsets)):
+    #     onset = onsets[i]
+    #     offset = offsets[i]
+
+    #     # --- SKIP bad values ---
+    #     if pd.isna(onset) or pd.isna(offset):
+    #         continue
+    #     if onset >= offset:
+    #         continue
+    #     if offset >= len(ppg):
+    #         continue
+
+    #     onset = int(onset)
+    #     offset = int(offset)
+
+    #     # --- Segment signal ---
+    #     data.ppg = ppg[onset:offset]
+    #     data.vpg = s.vpg[onset:offset]
+    #     data.apg = s.apg[onset:offset]
+    #     data.jpg = s.jpg[onset:offset]
+
+    #     # --- Get peaks within window ---
+    #     peak_arr = peaks[(peaks > onset) & (peaks < offset)]
+
+    #     if len(peak_arr) != 1 or pd.isna(peak_arr[0]):
+    #         continue
+
+    #     peak = int(peak_arr[0])
+
+
+    #     # --- Get other fiducials ---
+    #     try:
+    #         temp_fiducials = fp.get_row(i)
+    #     except:
+    #         continue
+
+    #     # --- Validate values ---
+    #     peak_value = ppg[peak]
+    #     onset_value = ppg[onset]
+    #     offset_value = ppg[offset]
+
+    #     peak_time = peak / fs
+    #     onset_time = onset / fs
+    #     offset_time = offset / fs
+
+    #     if (peak_value - onset_value) == 0:
+    #         continue
+
+    #     # --- Check next peak exists ---
+
+    #     if peak is pd.NA or pd.isna(peak) or not isinstance(peak, numbers.Number):
+    #         continue
+        
+    #     idx_array = np.where(peaks == peak)[0]
+    #     if len(idx_array) == 0 or idx_array[0] + 1 >= len(peaks):
+    #         continue
+
+    #     idx = idx_array[0]
+    #     next_peak = int(peaks[idx + 1])
+    #     if next_peak >= len(ppg):
+    #         continue
+
+    #     next_peak_value = ppg[next_peak]
+    #     next_peak_time = next_peak / fs
+
+    #     # --- Handle missing fiducials inside BmExtractor ---
+    #     try:
+    #         nan_cols = temp_fiducials.columns[temp_fiducials.isna().any()]
+    #         temp_fiducials[nan_cols] = np.nan
+    #     except:
+    #         pass  # skip if temp_fiducials fails
+
+    #     # --- Extract biomarkers ---
+    #     try:
+    #         onsets_values = np.array([onset_value, offset_value])
+    #         onsets_times = np.array([onset_time, offset_time])
+
+    #         biomarkers_extractor = BmExctator(
+    #             data, peak_value, peak_time,
+    #             next_peak_value, next_peak_time,
+    #             onsets_values, onsets_times,
+    #             fs, biomarkers_lst, temp_fiducials
+    #         )
+    #         biomarkers_vec = biomarkers_extractor.get_biomarker_extract_func()
+    #         df_biomarkers.loc[i] = list(biomarkers_vec)
+    #         df.loc[i] = {'onset': onset, 'offset': offset, 'peak': peak}
+    #     except Exception as e:
+    #         print(f"Biomarker extraction failed at index {i}: {e}")
+    #         continue
+
+    # return df, df_biomarkers
+
     for i in range(len(onsets)):
+       
         onset = onsets[i]
         offset = offsets[i]
-        data.ppg = ppg[int(onset):int(offset)]
+
+        if pd.isna(onset) or pd.isna(offset):
+            continue
+        onset = int(onset)
+        offset = int(offset)
+
+        data.ppg = ppg[onset:offset]
         data.vpg = s.vpg[int(onset):int(offset)]
         data.apg = s.apg[int(onset):int(offset)]
         data.jpg = s.jpg[int(onset):int(offset)]
         peak = peaks[(peaks > onset) * (peaks < offset)]
         if len(peak) != 1:
             continue
+
+        if pd.isna(peak[0]):
+            continue
+
         peak = peak[0]
 
         temp_fiducials = fp.get_row(i)

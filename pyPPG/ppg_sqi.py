@@ -42,8 +42,22 @@ def get_ppgSQI(ppg: list, fs: int, annotation: list):
         if (beatbegin + templatelength - 1 > len(ppg)) or (beatend > len(ppg)) or (beatbegin < 1):
             continue
 
+        # currentb = j
+        # cc = np.corrcoef(t, ppg[beatbegin:beatbegin + templatelength])
+        # c1[j] = cc[0, 1]
+        # if (c1[j] < 0):
+        #     c1[j] = 0
+
         currentb = j
-        cc = np.corrcoef(t, ppg[beatbegin:beatbegin + templatelength])
+        segment = ppg[beatbegin : beatbegin + templatelength]
+
+        # Safety check: make sure both arrays have the same length
+        min_len = min(len(t), len(segment))
+
+        # if min_len < 10:
+        #     continue  # skip too short beats, unstable correlation
+
+        cc = np.corrcoef(t[:min_len], segment[:min_len])
         c1[j] = cc[0, 1]
         if (c1[j] < 0):
             c1[j] = 0

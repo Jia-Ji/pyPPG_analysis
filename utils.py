@@ -5,6 +5,7 @@ import os
 import pandas as pd
 from pyPPG import PPG, Fiducials
 import pyPPG.ppg_sqi as SQI
+import os
 
 def plot_ppg_data(signal, fs):
 
@@ -93,3 +94,22 @@ def convert_npy_to_mat(s: np.array, pad:bool, tile:bool, tile_reps:int, pad_widt
     savemat(save_path+'/'+filename, mat_data)
 
     return mat_data
+
+def delete_empty_dirs(root_dir):
+    """
+    Recursively delete empty subdirectories under the given root directory.
+    
+    Args:
+        root_dir (str): Path to the root directory to check.
+    """
+    for dirpath, dirnames, filenames in os.walk(root_dir, topdown=False):
+        # Check if directory is empty (no files and no subdirectories)
+        if not dirnames and not filenames:
+            try:
+                os.rmdir(dirpath)
+                print(f"Deleted empty directory: {dirpath}")
+            except OSError as e:
+                print(f"Error deleting {dirpath}: {e}")
+
+# Example usage
+# delete_empty_dirs('/path/to/your/root_directory')

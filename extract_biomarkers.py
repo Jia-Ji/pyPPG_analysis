@@ -11,8 +11,10 @@ import json
 import pyPPG
 from scipy.signal import resample
 import pandas as pd
+from tqdm import tqdm
 
-from utils import convert_npy_to_mat, plot_ppg_data, estimate_HR, calculate_SQI
+
+from utils import convert_npy_to_mat, plot_ppg_data, estimate_HR, calculate_SQI, delete_empty_dirs
 
 
 '''
@@ -71,7 +73,7 @@ def filter_temp_fiducials(df: pd.DataFrame, s_length: int, pad_width: int) -> pd
                 if pd.isna(val):
                     return pd.NA
                 new_val = val - pad_width
-                return new_val if 0 <= new_val <= s_length else pd.NA
+                return new_val if 0 <= new_val <= s_length-1 else pd.NA
         df_copy[col] = df_copy[col].apply(adjust)
 
     # # Remove rows with any value < 0 or > segment_length
@@ -102,7 +104,7 @@ if __name__ == '__main__':
     data = np.load(ppg_data_path)
     data = data.reshape(data.shape[0], -1)
 
-    for i, segment in enumerate(data[:5]):
+    for i, segment in tqdm(enumerate(data), desc='Analyse ppg'):
 
         signal = convert_npy_to_mat(segment, pad =False, pad_width=pad_width, tile=False, tile_reps=tile_reps,save_path=mat_save_path, signal_index=i)  
         temp_signal = convert_npy_to_mat(segment, pad=True, pad_width=pad_width, tile=True, tile_reps=tile_reps, save_path=temp_mat_save_path, signal_index=i)
@@ -137,6 +139,7 @@ if __name__ == '__main__':
         # Extract biomarkers
         bmex = BM.BmCollection(s, fp)
         
+        selected_biomarkers = ["Tpi", "Tpp", "IPR"] 
         bm_defs, bm_vals, bm_stats = bmex.get_biomarkers()
         tmp_keys=bm_stats.keys()
         print('Statistics of the biomarkers:')
@@ -146,7 +149,8 @@ if __name__ == '__main__':
 
         # save ppg data
         fp_new = Fiducials(fp.get_fp() + s.start_sig) # here the starting sample is added so that the results are relative to the start of the original signal (rather than the start of the analysed segment)
-        save_data(s, fp_new, bm, savingformat, savingfolder)
+        save_data(savingformat=savingformat, savingfolder=savingfolder, print_flag=False,s=s, fp =fp, bm=bm )
+        delete_empty_dirs(savingfolder)
                 
 
         

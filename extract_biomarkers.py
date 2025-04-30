@@ -14,7 +14,8 @@ import pandas as pd
 from tqdm import tqdm
 
 
-from utils import convert_npy_to_mat, plot_ppg_data, estimate_HR, calculate_SQI, delete_empty_dirs
+from utils import convert_npy_to_mat, plot_ppg_data, estimate_HR
+from utils import calculate_SQI, delete_empty_dirs, merge_ppg_segment_csvs
 
 
 '''
@@ -104,53 +105,55 @@ if __name__ == '__main__':
     data = np.load(ppg_data_path)
     data = data.reshape(data.shape[0], -1)
 
-    for i, segment in tqdm(enumerate(data), desc='Analyse ppg'):
+    # for i, segment in tqdm(enumerate(data), desc='Analyse ppg'):
 
-        signal = convert_npy_to_mat(segment, pad =False, pad_width=pad_width, tile=False, tile_reps=tile_reps,save_path=mat_save_path, signal_index=i)  
-        temp_signal = convert_npy_to_mat(segment, pad=True, pad_width=pad_width, tile=True, tile_reps=tile_reps, save_path=temp_mat_save_path, signal_index=i)
+        # signal = convert_npy_to_mat(segment, pad =False, pad_width=pad_width, tile=False, tile_reps=tile_reps,save_path=mat_save_path, signal_index=i)  
+        # temp_signal = convert_npy_to_mat(segment, pad=True, pad_width=pad_width, tile=True, tile_reps=tile_reps, save_path=temp_mat_save_path, signal_index=i)
 
-        # plot_ppg_data(signal['Data'], fs =50)
+        # # plot_ppg_data(signal['Data'], fs =50)
 
 
 
-        signal_path = mat_save_path+'/'+f"segment_{i}.mat"
-        temp_signal_path = temp_mat_save_path+'/'+f"temp_segment_{i}.mat"
-        s = create_ppg(s_path=signal_path, start_sig=start_sig, end_sig=end_sig, use_tk=use_tk)
-        temp_s = create_ppg(s_path=temp_signal_path, start_sig=start_sig, end_sig=end_sig, use_tk=use_tk)
+        # signal_path = mat_save_path+'/'+f"segment_{i}.mat"
+        # temp_signal_path = temp_mat_save_path+'/'+f"temp_segment_{i}.mat"
+        # s = create_ppg(s_path=signal_path, start_sig=start_sig, end_sig=end_sig, use_tk=use_tk)
+        # temp_s = create_ppg(s_path=temp_signal_path, start_sig=start_sig, end_sig=end_sig, use_tk=use_tk)
 
-        fpex = FP.FpCollection(temp_s)
-        temp_fiducials = fpex.get_fiducials(temp_s)
+        # fpex = FP.FpCollection(temp_s)
+        # temp_fiducials = fpex.get_fiducials(temp_s)
 
-        # print(len(s.ppg))
-        fiducials = filter_temp_fiducials(temp_fiducials, len(s.ppg) , pad_width)
+        # # print(len(s.ppg))
+        # fiducials = filter_temp_fiducials(temp_fiducials, len(s.ppg) , pad_width)
 
-        # Create a fiducials class
-        fp = Fiducials(fiducials)
+        # # Create a fiducials class
+        # fp = Fiducials(fiducials)
 
-        # Plot fiducial points
-        # plot_fiducials(s, fp, savingfolder=fig_save_path, legend_fontsize=6) 
+        # # Plot fiducial points
+        # # plot_fiducials(s, fp, savingfolder=fig_save_path, legend_fontsize=6) 
 
-        # Estimate HR
-        hr = estimate_HR(s, fp)
+        # # Estimate HR
+        # hr = estimate_HR(s, fp)
 
-        # calculate signal quality index
-        sqi = calculate_SQI(s, fp)
+        # # calculate signal quality index
+        # sqi = calculate_SQI(s, fp)
 
-        # Extract biomarkers
-        bmex = BM.BmCollection(s, fp)
+        # # Extract biomarkers
+        # bmex = BM.BmCollection(s, fp)
         
-        selected_biomarkers = ["Tpi", "Tpp", "IPR"] 
-        bm_defs, bm_vals, bm_stats = bmex.get_biomarkers()
-        tmp_keys=bm_stats.keys()
-        print('Statistics of the biomarkers:')
-        for i in tmp_keys: print(i,'\n',bm_stats[i])
+        # selected_biomarkers = ["Tpi", "Tpp", "IPR"] 
+        # bm_defs, bm_vals, bm_stats = bmex.get_biomarkers()
+        # tmp_keys=bm_stats.keys()
+        # print('Statistics of the biomarkers:')
+        # for i in tmp_keys: print(i,'\n',bm_stats[i])
 
-        bm = Biomarkers(bm_defs, bm_vals, bm_stats)
+        # bm = Biomarkers(bm_defs, bm_vals, bm_stats)
 
-        # save ppg data
-        fp_new = Fiducials(fp.get_fp() + s.start_sig) # here the starting sample is added so that the results are relative to the start of the original signal (rather than the start of the analysed segment)
-        save_data(savingformat=savingformat, savingfolder=savingfolder, print_flag=False,s=s, fp =fp, bm=bm )
-        delete_empty_dirs(savingfolder)
+        # # save ppg data
+        # fp_new = Fiducials(fp.get_fp() + s.start_sig) # here the starting sample is added so that the results are relative to the start of the original signal (rather than the start of the analysed segment)
+        # save_data(savingformat=savingformat, savingfolder=savingfolder, print_flag=False,s=s, fp =fp, bm=bm )
+    merge_ppg_segment_csvs(savingfolder, 'Biomarker_stats', len(data))
+    delete_empty_dirs(savingfolder)
+
                 
 
         

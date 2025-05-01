@@ -112,6 +112,47 @@ def delete_empty_dirs(root_dir):
             except OSError as e:
                 print(f"Error deleting {dirpath}: {e}")
 
+# def merge_ppg_segment_csvs(savingpath, temp_dir, csv_num):
+#     """
+#     Merge all PPG segment CSV files into a single CSV.
+
+#     Args:
+#         directory (str): Path to the directory containing the CSV files.
+#         output_path (str): Path to save the merged CSV.
+#     """
+#     dir_path = os.path.join(savingpath, temp_dir)
+#     merged_data = {}
+
+#     print(csv_num)
+
+
+#     for filename in os.listdir(dir_path):
+#         match = re.match(r'segment_(\d+)[_ppg_sig]*[_ratios]*_btwn_(\d+)-(\d+)\.csv', filename)
+#         if match:
+#             index = int(match.group(1))
+#             filepath = os.path.join(dir_path, filename)
+#             df = pd.read_csv(filepath, index_col=0)
+#             merged_data[index] = df
+
+#     if not merged_data:
+#         print("No matching files found.")
+#         return
+
+#     # Merge into a multi-index column DataFrame
+#     merged_df = pd.concat(merged_data, axis=1)
+#     merged_df.columns.names = ['Segment_Index', 'Statistics']
+
+#     # Save each feature to its own file
+#     for feature in merged_df.columns.levels[1]:
+#         feature_df = merged_df.xs(feature, level='Statistics', axis=1).T
+
+#         feature_df.index.name = 'Segment_Index'
+#         feature_df = feature_df.sort_index()
+
+#         output_path = os.path.join(savingpath, f"{feature}.csv")
+#         feature_df.to_csv(output_path)
+#         print(f"Saved: {output_path}")
+
 def merge_ppg_segment_csvs(savingpath, temp_dir, csv_num):
     """
     Merge all PPG segment CSV files into a single CSV.
@@ -121,9 +162,7 @@ def merge_ppg_segment_csvs(savingpath, temp_dir, csv_num):
         output_path (str): Path to save the merged CSV.
     """
     dir_path = os.path.join(savingpath, temp_dir)
-    merged_data = {}
-
-    print(csv_num)
+    data_rows = []
 
 
     for filename in os.listdir(dir_path):
@@ -131,26 +170,20 @@ def merge_ppg_segment_csvs(savingpath, temp_dir, csv_num):
         if match:
             index = int(match.group(1))
             filepath = os.path.join(dir_path, filename)
-            df = pd.read_csv(filepath, index_col=0)
-            merged_data[index] = df
+            df = pd.read_csv(filepath, index_col=0)  
 
-    if not merged_data:
+            flat_row = {}
+            for col in df.columns:
+                for stat in df.index:
+                    flat_row[f"{col}_{stat}"] = df.loc[stat, col]
+            flat_row['Segment'] = index
+            data_rows.append(flat_row)  
+
+    if not data_rows:
         print("No matching files found.")
         return
-
-    # Merge into a multi-index column DataFrame
-    merged_df = pd.concat(merged_data, axis=1)
-    merged_df.columns.names = ['Segment_Index', 'Statistics']
-
-    # Save each feature to its own file
-    for feature in merged_df.columns.levels[1]:
-        feature_df = merged_df.xs(feature, level='Statistics', axis=1).T
-
-        feature_df.index.name = 'Segment_Index'
-        feature_df = feature_df.sort_index()
-
-        output_path = os.path.join(savingpath, f"{feature}.csv")
-        feature_df.to_csv(output_path)
-        print(f"Saved: {output_path}")
-
     
+    final_df = pd.DataFrame(data_rows).set_index('Segment').sort_index().groupby('Segment').first()
+    output_path = os.path.join(savingpath, "biomarkers_stats.csv")
+    final_df.to_csv(output_path)
+    print(f"Merged CSV saved to: {output_path}")

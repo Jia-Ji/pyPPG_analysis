@@ -87,7 +87,7 @@ def convert_npy_to_mat(s: np.array, pad:bool, tile:bool, tile_reps:int, pad_widt
     # print(signal_column.shape)
     mat_data = {
         'Data': signal_column,
-        'Fs': 50
+        'Fs': 240
     }
     
     if not os.path.exists(save_path):
@@ -153,7 +153,7 @@ def delete_empty_dirs(root_dir):
 #         feature_df.to_csv(output_path)
 #         print(f"Saved: {output_path}")
 
-def merge_ppg_segment_csvs(savingpath, temp_dir, csv_num):
+def merge_ppg_segment_csvs(savingpath, temp_dir, output_file):
     """
     Merge all PPG segment CSV files into a single CSV.
 
@@ -184,6 +184,6 @@ def merge_ppg_segment_csvs(savingpath, temp_dir, csv_num):
         return
     
     final_df = pd.DataFrame(data_rows).set_index('Segment').sort_index().groupby('Segment').first()
-    output_path = os.path.join(savingpath, "biomarkers_stats.csv")
+    output_path = os.path.join(savingpath, output_file)
     final_df.to_csv(output_path)
     print(f"Merged CSV saved to: {output_path}")

@@ -835,8 +835,8 @@ class FpCollection:
 
         # Make filter
         Fn = fs / 2                                 # Nyquist Frequency
-        FcU = 15                                   # Cut off Frequency: 20 Hz
-        FcD = FcU + 3                               # Transition Frequency: 5 Hz
+        FcU = 20                                   # Cut off Frequency: 20 Hz, 15
+        FcD = FcU + 5                               # Transition Frequency: 5 Hz, 3
 
         n = 21                                      # Filter order
         f = [0, (FcU / Fn), (FcD / Fn), 1]          # Frequency band edges
